@@ -1,20 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Audio } from 'expo-av';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import { Button, SafeAreaView } from 'react-native';
+
+const Example = () => {
+
+// sounds/music
+const [soundObj, setSoundObj] = useState(new Audio.Sound);
+const [soundObj1, setSoundObj1] = useState(new Audio.Sound);
+
+const [soundObj2, setSoundObj2] = useState(new Audio.Sound);
+
+
+useEffect(() => {
+    async function loadSounds() {
+        await soundObj.loadAsync(require('./test1.wav'))
+        await soundObj1.loadAsync(require('./test.wav'))
+        await soundObj2.loadAsync(require('./track.mp3'))
+    }
+    loadSounds();
+}, [])
+
+/**
+* Action taken when pressing button
+*/
+const doPlay = (soundObj) => { 
+   
+soundObj.playAsync();
+soundObj.replayAsync()
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+return (
+<SafeAreaView>
+<Button onPress={() => doPlay(soundObj)} title="Example" />
+<Button onPress={() => doPlay(soundObj1)}  title="Example" />
+<Button onPress={() => doPlay(soundObj2)}  title="Example" />
+</SafeAreaView>
+)
+}
+
+export default Example;
