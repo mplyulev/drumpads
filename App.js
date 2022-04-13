@@ -1,42 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { TouchableOpacity, Image, View, StyleSheet } from "react-native";
+import ControlBar from './components/ControlBar';
 import { Audio } from 'expo-av';
-
-import { Button, SafeAreaView } from 'react-native';
-
+import Vinyl from './components/Vinyl';
 const Example = () => {
+    const [currentSong, setCurrentSong] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-// sounds/music
-const [soundObj, setSoundObj] = useState(new Audio.Sound);
-const [soundObj1, setSoundObj1] = useState(new Audio.Sound);
-
-const [soundObj2, setSoundObj2] = useState(new Audio.Sound);
-
-
-useEffect(() => {
-    async function loadSounds() {
-        await soundObj.loadAsync(require('./test1.wav'))
-        await soundObj1.loadAsync(require('./test.wav'))
-        await soundObj2.loadAsync(require('./track.mp3'))
+    const loadSound = async () => {
+        setIsLoading(true);
+        console.log('Loading song')
+        const { sound } = await Audio.Sound.createAsync(require('./track.mp3'));
+        setCurrentSong(sound);
+        setIsLoading(false)
+        console.log('Complete')
     }
-    loadSounds();
-}, [])
 
-/**
-* Action taken when pressing button
-*/
-const doPlay = (soundObj) => { 
-   
-soundObj.playAsync();
-soundObj.replayAsync()
-}
+    useEffect(() => {
+        loadSound();
+    }, [])
 
-return (
-<SafeAreaView>
-<Button onPress={() => doPlay(soundObj)} title="Example" />
-<Button onPress={() => doPlay(soundObj1)}  title="Example" />
-<Button onPress={() => doPlay(soundObj2)}  title="Example" />
-</SafeAreaView>
-)
-}
+    return (
+        <View style={styles.container}>
+            <Vinyl style={styles.controlBar}
+                   isLoading={isLoading}
+                   setCurrentSong={setCurrentSong}
+                   setIsPlaying={setIsPlaying}
+                   isPlaying={isPlaying}
+                   currentSong={currentSong}
+           />
+            <ControlBar style={styles.controlBar}
+                        isLoading={isLoading}
+                        setCurrentSong={setCurrentSong}
+                        setIsPlaying={setIsPlaying}
+                        isPlaying={isPlaying}
+                        currentSong={currentSong}
+            />
 
+        </View>
+     );
+};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'red'
+  }
+});
 export default Example;
